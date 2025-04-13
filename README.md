@@ -5,6 +5,16 @@
 <p>This project is developed with React Framework, and Vite is a build tool that aims to provide a faster and leaner development experience for modern web projects.
 This will simplifies the development workflow by offering speed, flexibility, and a rich ecosystem of plugins. </p>
 
+### To install Vite and React `my-app` is the project's folder
+```
+npm create vite@latest my-app -- --template react
+```
+
+### To install for routing
+```
+npm i react-router
+
+```
 
 ### To install all dependencies
 ```
