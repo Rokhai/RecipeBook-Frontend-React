@@ -58,6 +58,11 @@ function AddRecipeModal({ isOpen, onClose, onAddRecipe }) {
             recipe: recipeSteps,
         };
         onAddRecipe(newRecipe);
+        setTitle('');
+        setDescription('');
+        setImage(null);
+        setIngredients(['']);
+        setRecipeSteps(['']);
         onClose();
     };
 

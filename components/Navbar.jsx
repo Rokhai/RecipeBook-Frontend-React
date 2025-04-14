@@ -85,10 +85,13 @@ function Navbar() {
               <div className="absolute right-0 mt-4 w-48 bg-white text-black p-4 rounded shadow-lg z-50">
                 <ul>
                   <li className="px-4 py-2 hover:bg-gray-200">
-                    <a href="/settings">Settings</a>
+                  <Link to="/home" onClick={() => setMenuOpen(false)}>
+                        Settings
+                      </Link>
                   </li>
                   <li className="px-4 py-2 hover:bg-gray-200">
-                    <button onClick={() => alert('Logged out')}>Logout</button>
+                    <Link to="/home">Log out</Link>
+                    {/* <button onClick={() => alert('Logged out')}>Logout</button> */}
                   </li>
                 </ul>
               </div>
@@ -132,20 +135,24 @@ function Navbar() {
                 >
                   <ul>
                     <li className="px-4 py-2 hover:bg-gray-200">
-                      <a href="/settings" onClick={() => setMenuOpen(false)}>
+                      <Link to="/home" onClick={() => setMenuOpen(false)}>
                         Settings
-                      </a>
+                      </Link>
+                      {/* <a href="/settings" onClick={() => setMenuOpen(false)}>
+                        Settings
+                      </a> */}
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-200">
-                      <button
+                      <Link to="/home">Log out</Link>
+                      {/* <button
                         onClick={() => {
-                          // alert('Logged out');
+                          alert('Logged out');
                           window.location.href = '/home';
                           setMenuOpen(false);
                         }}
                       >
                         Logout
-                      </button>
+                      </button> */}
                     </li>
                   </ul>
                 </div>
