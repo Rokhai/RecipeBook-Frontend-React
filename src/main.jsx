@@ -10,7 +10,7 @@ import { StrictMode } from 'react'
 import Recipes from '../pages/Recipes/Recipes.jsx'
 
 createRoot(document.getElementById('root')).render(
-    <StrictMode>
+
         <BrowserRouter>
             <Routes>
                 {/* <Route path="/" element={<Login />} /> */}
@@ -23,6 +23,6 @@ createRoot(document.getElementById('root')).render(
 
             </Routes>
         </BrowserRouter>
-    </StrictMode>
+    
 
 )
