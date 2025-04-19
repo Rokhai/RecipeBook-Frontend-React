@@ -1,7 +1,9 @@
 import React from 'react'
 import axios from 'axios'
 // import { redirect } from 'react-router';
-import { useNavigate, redirect } from 'react-router';
+import { useNavigate } from 'react-router';
+import api from '../../util/api';
+
 
 function Login() {
 
@@ -17,10 +19,16 @@ function Login() {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:3000/users/login', {
+            // const response = await axios.post('http://localhost:3000/auth/login', {
+            //     withCredentials: true,
+            //     username,
+            //     password
+            // })
+            const response = await api.post('/auth/login', {
                 username,
                 password
-            })
+            });
+
             // Handle success response
             if (response.status === 200) {
                 alert("User logged in successfully");
@@ -50,10 +58,10 @@ function Login() {
 
         <div className='flex flex-col items-center justify-center h-screen'>
             <h1 className='text-4xl font-bold mb-14'>Login</h1>
-            <form onSubmit={toHome} className='flex flex-col w-96 border-gray-500 border-1 rounded-lg p-6'>
+            <form onSubmit={handleSubmit} className='flex flex-col sm:w-sm border-gray-500 border-1 rounded-lg p-6'>
                 <div className='mb-4'>
                     <label htmlFor="username" className='block mb-2'>Username</label>
-                    <input type="username" id="username" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' value={"Rokhai"} required />
+                    <input type="username" id="username" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' value={"rokhai"} required />
                 </div>
                 <div>
                     <label htmlFor="password" className='block mb-2'>Password</label>
