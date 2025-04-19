@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router'; // Ensure correct import for React Router
+import axios from 'axios';
+
+const api = axios.create({
+    baseURL: 'http://localhost:3000',
+    withCredentials: true,
+})
+
 
 function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -28,6 +35,33 @@ function Navbar() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleLogout = async (e) => {
+    // Perform logout logic here
+    e.preventDefault();
+
+    try {
+      const response = await api.get('/auth/logout') 
+
+      // Handle success response
+      if (response.status === 200) {
+        alert('Logged out successfully');
+        window.location.href = '/login'; // Redirect to home page
+      } else {
+        alert('Error logging out');
+      }
+    } catch (err) {
+      // Handle error response
+      if (err.response && err.response.status === 400) {
+        alert(err.response.data.message);
+      } else {
+        alert('An error occurred. Please try again later.');
+      }
+      // Log the error for debugging
+      console.error(err);
+      alert('Error logging out');
+    }
+  }
 
   // Function to check if route is active
   const isActive = (path) => location.pathname === path;
@@ -90,7 +124,7 @@ function Navbar() {
                       </Link>
                   </li>
                   <li className="px-4 py-2 hover:bg-gray-200">
-                    <Link to="/home">Log out</Link>
+                    <Link to="/home" onClick={handleLogout}>Log out</Link>
                     {/* <button onClick={() => alert('Logged out')}>Logout</button> */}
                   </li>
                 </ul>
