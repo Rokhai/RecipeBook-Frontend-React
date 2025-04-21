@@ -1,13 +1,22 @@
-import React from 'react'
-import axios from 'axios'
-// import { redirect } from 'react-router';
-import { useNavigate } from 'react-router';
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router';
 import api from '../../util/api';
+
+import Toast from '../../components/Toast';
 
 
 function Login() {
-
+    const location = useLocation();    
     const navigate = useNavigate();
+
+    const [toastMessage, setToastMessage] = useState("");
+
+    // Check if the user was logged out successfully
+    useEffect(() => {
+        if (location.state?.loggedOut) { // location.state && location.state.loggedOut
+            setToastMessage("Logged out successfully");
+        }
+    }, [location.state]); // Run this effect only when location.state changes
 
     const toHome = () => { 
         navigate('/home');
@@ -19,11 +28,6 @@ function Login() {
         e.preventDefault();
 
         try {
-            // const response = await axios.post('http://localhost:3000/auth/login', {
-            //     withCredentials: true,
-            //     username,
-            //     password
-            // })
             const response = await api.post('/auth/login', {
                 username,
                 password
@@ -31,25 +35,27 @@ function Login() {
 
             // Handle success response
             if (response.status === 200) {
-                alert("User logged in successfully");
-                // Redirect to home page or perform any other action
-                // window.location.href = '/home';
-                // return redirect('/home');
-                // redirect('/home');
-                navigate('/home');
+                setToastMessage("User logged in successfully"); // Show toast message
+                setTimeout(() => {
+                    navigate('/home'); // Redirect to home page after 3 seconds
+                }, 1500);
             } else {
-                alert("Error logging in");
+                // alert("Error logging in");
+                setToastMessage("Error logging in");
             }
         } catch (err) {
             // Handle error response
             if (err.response && err.response.status === 400) {
-                alert(err.response.data.message);
+                // alert(err.response.data.message);
+                setToastMessage(err.response.data.message);
             } else {
-                alert("An error occurred. Please try again later.");
+                // alert("An error occurred. Please try again later.");
+                setToastMessage("An error occurred. Please try again later.");
             }
             // Log the error for debugging
             console.error(err);
-            alert("Error logging in");
+            // alert("Error logging in");
+            setToastMessage("Error logging in");
         }
     }
 
@@ -61,7 +67,7 @@ function Login() {
             <form onSubmit={handleSubmit} className='flex flex-col sm:w-sm border-gray-500 border-1 rounded-lg p-6'>
                 <div className='mb-4'>
                     <label htmlFor="username" className='block mb-2'>Username</label>
-                    <input type="username" id="username" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' value={"rokhai"} required />
+                    <input type="username" id="username" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' value={"rok"} required />
                 </div>
                 <div>
                     <label htmlFor="password" className='block mb-2'>Password</label>
@@ -71,14 +77,19 @@ function Login() {
                         <label htmlFor="remember">Remember me</label>
                     </div>
                 </div>
-                <a href="/home" className='w-full'>
-                    <button type="submit" className='bg-black text-white font-bold px-6 py-3 mt-12 mb-2'>Login</button>
-                </a>
+                <button type="submit" className='bg-gray-900 text-white font-bold px-6 py-3 mt-12 mb-2 cursor-pointer hover:bg-gray-800'>Login</button>
                 <div>
                     <p className='text-center mt-4'>Don't have an account? <a href="/register" className='text-blue-500'>Register</a></p>
 
                 </div>
             </form>
+
+            {/* Toast Component */}
+            <Toast 
+                message={toastMessage} 
+                duration={3000} // Duration in milliseconds it will disappear in 3 seconds
+                onClose={() => setToastMessage("")} // Clear the message when closed
+            />
         </div>
     )
 }
