@@ -1,12 +1,8 @@
-// require('dotenv').config();
 import axios from 'axios';
 
-const prod_url = "https://recipe-book-backend-six.vercel.app/"
-// console.log('API Base URL:', process.env.REACT_APP_API_BASEURL);
-
+// Create an Axios instance with a base URL and credentials
 const api = axios.create({
-    baseURL: prod_url, // Backend URL
-    // baseURL: process.env.REACT_APP_API_BASEURL, // Backend URL
+    baseURL: import.meta.env.VITE_API_BASEURL, // Parse backend URL from environment variables
     withCredentials: true, // Include cookies in requests
 });
 
