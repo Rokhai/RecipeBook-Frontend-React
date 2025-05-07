@@ -1,13 +1,14 @@
-import React from 'react'
-import axios from 'axios'
-import { redirect } from 'react-router';
-
+import React, {useState} from 'react'
+import api from '../../util/api';
+import { redirect, useNavigate } from 'react-router';
+import Toast from '../../components/Toast';
 
 
 
 function Register() {
+    const [toastMessage, setToastMessage] = useState("");
 
-
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,7 +30,7 @@ function Register() {
         try {
 
             // Send a POST request to the backend API
-            const response = await axios.post('http://localhost:3000/users',{
+            const response = await api.post('/users', {
                 name,
                 username,
                 password
@@ -37,12 +38,19 @@ function Register() {
 
             // Handle success response
             if (response.status === 201) {
-                alert("User registered successfully");
+                // alert("User registered successfully");
                 // Redirect to login page or perform any other action
                 // window.location.href = '/login';
-                redirect('/home');
+                // redirect('/home');
+                setToastMessage("User registered successfully");
+                setTimeout(() => {
+                    navigate('/login'); // Redirect to login page after 3 seconds
+                }, 1500);
+            
+
             } else {
-                alert("Error registering user");
+                // alert("Error registering user");
+                setToastMessage("Error registering user");
             }
         } catch (err) {
             // Handle error response
@@ -58,7 +66,7 @@ function Register() {
     }
 
     return (
-    <div className='flex flex-col items-center justify-center h-screen'>
+        <div className='flex flex-col items-center justify-center h-screen'>
             <h1 className='text-4xl font-bold mb-14'>Register</h1>
             <form onSubmit={handleSubmit} className='flex flex-col w-96 border-gray-500 border-1 rounded-lg p-6'>
                 <div>
@@ -73,12 +81,12 @@ function Register() {
                 <div>
                     <label htmlFor="password" className='block mb-2'>Password</label>
                     <input type="password" id="password" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' required />
-                </div>  
+                </div>
                 <div>
                     <label htmlFor="confirmPassword" className='block mb-2'>Confirm Password</label>
                     <input type="password" id="confirmPassword" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' required />
-                </div>  
-                
+                </div>
+
 
                 <button type="submit" className='bg-black text-white font-bold px-6 py-3 mt-12 mb-2'>Register</button>
 
@@ -86,8 +94,14 @@ function Register() {
                     <p className='text-center mt-4'>Already have an account? <a href="/login" className='text-blue-500'>Login</a></p>
                 </div>
             </form>
+            {/* Toast Component */}
+            <Toast 
+                message={toastMessage}
+                duration={3000} // Duration in milliseconds
+                onClose={() => { }} // Function to call when the toast is closed
+            />
         </div>
-  )
+    )
 }
 
 export default Register

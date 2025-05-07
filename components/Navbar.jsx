@@ -45,18 +45,23 @@ function Navbar() {
         // window.location.href = '/login'; // Redirect to home page
         navigate('/login', {state: {loggedOut: true}}); // Use navigate to redirect
       } else {
-        alert('Error logging out');
+        navigate(location.pathname, {state: {loggedOut: true, message: "Error logging out"}})
+        
+        // alert('Error logging out');
       }
     } catch (err) {
       // Handle error response
       if (err.response && err.response.status === 400) {
-        alert(err.response.data.message);
+        // alert(err.response.data.message);
+        navigate(location.pathname, {state: {loggedOut: true, message: err.response.data.message}})
       } else {
-        alert('An error occurred. Please try again later.');
+        // alert('An error occurred. Please try again later.');
+        navigate(location.pathname, {state: {loggedOut: true, message: "An error occurred. Please try again later."}})
       }
       // Log the error for debugging
       console.error(err);
-      alert('Error logging out');
+        navigate(location.pathname, {state: {loggedOut: true, message: "Error logging out"}})
+      // alert('Error logging out');
     }
   }
 
@@ -94,21 +99,21 @@ function Navbar() {
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-10 mx-4">
           <li
-            className={`px-4 py-2 rounded-full ${
+            className={`px-4 py-2 rounded ${
               isActive('/home') ? 'bg-white text-black' : 'hover:bg-gray-700'
             }`}
           >
             <Link to="/home">Home</Link>
           </li>
           <li
-            className={`px-4 py-2 rounded-full ${
+            className={`px-4 py-2 rounded ${
               isActive('/recipes') ? 'bg-white text-black' : 'hover:bg-gray-700'
             }`}
           >
             <Link to="/recipes">My Recipes</Link>
           </li>
           <li
-            className="relative px-4 py-2 rounded-full hover:bg-gray-700"
+            className="relative px-4 py-2 rounded hover:bg-gray-700"
             ref={dropdownRef}
           >
             <button onClick={toggleDropdown} className="focus:outline-none">

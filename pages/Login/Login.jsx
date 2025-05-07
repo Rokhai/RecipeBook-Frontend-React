@@ -15,19 +15,25 @@ function Login() {
     useEffect(() => {
         if (location.state?.loggedOut) { // location.state && location.state.loggedOut
             setToastMessage("Logged out successfully");
+            // location.state.loggedOut = false; // Reset the loggedOut state
+            
+            // Clear the loggedOut state after showing the message
+            navigate(location.pathname, {replace: true, state: {}})
+
+            setTimeout(() => {
+                setToastMessage(""); // Clear the message after 1.5 seconds
+            }, 1500);
         }
     }, [location.state]); // Run this effect only when location.state changes
 
-    const toHome = () => { 
-        navigate('/home');
-    }
-
+    // Handle form submission
     const handleSubmit = async (e) => {
         const username = e.target.username.value;
         const password = e.target.password.value;
         e.preventDefault();
 
         try {
+            // Perform login logic here
             const response = await api.post('/auth/login', {
                 username,
                 password
@@ -67,11 +73,11 @@ function Login() {
             <form onSubmit={handleSubmit} className='flex flex-col sm:w-sm border-gray-500 border-1 rounded-lg p-6'>
                 <div className='mb-4'>
                     <label htmlFor="username" className='block mb-2'>Username</label>
-                    <input type="username" id="username" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' value={"rok"} required />
+                    <input type="username" id="username" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' required /> {/**value={"rok"}  */}
                 </div>
                 <div>
                     <label htmlFor="password" className='block mb-2'>Password</label>
-                    <input type="password" id="password" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' value={"123"} required />
+                    <input type="password" id="password" className='border border-gray-300 rounded px-4 py-2 mb-4 w-full' required /> {/**value={"123"}  */}
                     <div>
                         <input type="checkbox" id="remember" className='mr-2' />
                         <label htmlFor="remember">Remember me</label>
@@ -86,9 +92,10 @@ function Login() {
 
             {/* Toast Component */}
             <Toast 
-                message={toastMessage} 
+                message={toastMessage}
                 duration={3000} // Duration in milliseconds it will disappear in 3 seconds
                 onClose={() => setToastMessage("")} // Clear the message when closed
+                position='bottom-middle' // Position of the toast
             />
         </div>
     )
