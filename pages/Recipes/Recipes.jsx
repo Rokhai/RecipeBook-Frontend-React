@@ -1,98 +1,44 @@
 import React from 'react'
 import { useState, useEffect, useRef } from 'react'
-import Navbar from '../../components/Navbar'
+// import Navbar from '../../components/Navbar'
 
+import api from '../../util/api';
 import ViewRecipeModal from './components/ViewRecipeModal';
 import AddRecipeModal from './components/AddRecipeModal';
 import EditRecipeModal from './components/EditRecipeModal';
 import RecipeCard from './components/RecipeCard';
-
-const recipeData = [
-    {
-        id: 1,
-        title: "Braised Pork Adobo",
-        description: "A classic Filipino dish made with pork braised in soy sauce, vinegar, and garlic.",
-        image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F4.bp.blogspot.com%2F--jj6-iM9YQU%2FVjJV0O-Bq_I%2FAAAAAAAAAOk%2Fl1wJkkOZTLQ%2Fs1600%2Fbraised-pork-adobo.jpg&f=1&nofb=1&ipt=7c395587322e43f4698819a5dce08aa013eaa9f25be1cdbd613ce937ac1b6a7e",
-        ingredients: [
-            "Pork belly",
-            "Soy sauce",
-            "Vinegar",
-            "Garlic",
-            "Bay leaves"
-        ],
-        recipe: [
-            "Combine soy sauce, vinegar, garlic, and bay leaves in a bowl.",
-            "Add pork and marinate for at least 30 minutes.",    
-        ]
-    },
-    {
-        id: 2,
-        title: "Chicken Curry",
-        description: "A flavorful dish made with chicken, spices, and coconut milk.",
-        image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fbigoven-res.cloudinary.com%2Fimage%2Fupload%2Fchicken-curry-59.jpg&f=1&nofb=1&ipt=84489cd00efa80bb92431c9c1daba0cfdb9b50251995405d85b810f525ef554d",
-        ingredients: [
-            "Chicken",
-            "Curry powder",
-            "Coconut milk",
-            "Onion",
-            "Garlic"
-        ],
-        recipe: [
-            "1. Heat oil in a pan and sauté onion and garlic.",
-            "2. Add chicken and cook until browned.",
-            "3. Stir in curry powder and coconut milk, simmer until chicken is cooked through."
-        ],
-    },
-    {
-        id: 3,
-        title: "Braised Pork Adobo",
-        description: "A classic Filipino dish made with pork braised in soy sauce, vinegar, and garlic.",
-        image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F4.bp.blogspot.com%2F--jj6-iM9YQU%2FVjJV0O-Bq_I%2FAAAAAAAAAOk%2Fl1wJkkOZTLQ%2Fs1600%2Fbraised-pork-adobo.jpg&f=1&nofb=1&ipt=7c395587322e43f4698819a5dce08aa013eaa9f25be1cdbd613ce937ac1b6a7e",
-    },
-    {
-        id: 4,
-        title: "Chicken Curry",
-        description: "A flavorful dish made with chicken, spices, and coconut milk.",
-        image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fbigoven-res.cloudinary.com%2Fimage%2Fupload%2Fchicken-curry-59.jpg&f=1&nofb=1&ipt=84489cd00efa80bb92431c9c1daba0cfdb9b50251995405d85b810f525ef554d"
-    },
-    {
-        id: 5,
-        title: "Braised Pork Adobo",
-        description: "A classic Filipino dish made with pork braised in soy sauce, vinegar, and garlic.",
-        image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F4.bp.blogspot.com%2F--jj6-iM9YQU%2FVjJV0O-Bq_I%2FAAAAAAAAAOk%2Fl1wJkkOZTLQ%2Fs1600%2Fbraised-pork-adobo.jpg&f=1&nofb=1&ipt=7c395587322e43f4698819a5dce08aa013eaa9f25be1cdbd613ce937ac1b6a7e",
-    },
-    {
-        id: 6,
-        title: "Chicken Curry",
-        description: "A flavorful dish made with chicken, spices, and coconut milk.",
-        image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fbigoven-res.cloudinary.com%2Fimage%2Fupload%2Fchicken-curry-59.jpg&f=1&nofb=1&ipt=84489cd00efa80bb92431c9c1daba0cfdb9b50251995405d85b810f525ef554d"
-    },
-    {
-        id: 7,
-        title: "Braised Pork Adobo",
-        description: "A classic Filipino dish made with pork braised in soy sauce, vinegar, and garlic.",
-        image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F4.bp.blogspot.com%2F--jj6-iM9YQU%2FVjJV0O-Bq_I%2FAAAAAAAAAOk%2Fl1wJkkOZTLQ%2Fs1600%2Fbraised-pork-adobo.jpg&f=1&nofb=1&ipt=7c395587322e43f4698819a5dce08aa013eaa9f25be1cdbd613ce937ac1b6a7e",
-    },
-    {
-        id: 8,
-        title: "Chicken Curry",
-        description: "A flavorful dish made with chicken, spices, and coconut milk.",
-        image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fbigoven-res.cloudinary.com%2Fimage%2Fupload%2Fchicken-curry-59.jpg&f=1&nofb=1&ipt=84489cd00efa80bb92431c9c1daba0cfdb9b50251995405d85b810f525ef554d"
-    }
-    // Add more recipes here   
-]
-
-
-
+import MainLayout from '../../components/Layout/MainLayout';
 
 function Recipes() {
-    const [recipes, setRecipes] = useState(recipeData); // State to manage the list of recipes
+    const [recipes, setRecipes] = useState([]); // State to manage the list of recipes
     const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false); // State to control the modal visibility
     const [isAddRecipeModalOpen, setIsAddRecipeModalOpen] = useState(false); // State to control the add recipe modal visibility
     const [isEditRecipeModalOpen, setIsEditRecipeModalOpen] = useState(false); // State to control the edit recipe modal visibility
     const [selectedRecipe, setSelectedRecipe] = useState(null); // State to store the selected recipe
 
-    
+
+    // Fetch recipes from the backend when the component mounts
+    useEffect(() => {
+
+        const fetchRecipes = async () => {
+            console.log("Fetching recipes...");
+            try {
+                console.log("Trying to fetch recipes...");
+                const response = await api.get('/recipes');
+                if (response.status === 200) {
+                    console.log("Trying to validate recipes...");
+                    console.log("Response", response.data);
+                    setRecipes(response.data); // Set the recipes state with the fetched data
+
+                }
+            } catch (err) {
+                console.error('Error fetching recipes: ', err);
+            }
+        };
+
+        fetchRecipes();
+
+    }, []);
 
     const openRecipeModal = (recipe) => {
         setSelectedRecipe(recipe);
@@ -112,8 +58,9 @@ function Recipes() {
         setIsAddRecipeModalOpen(false);
     };
 
-    const openEditRecipeModal = () => {
+    const openEditRecipeModal = (recipe) => {
         closeRecipeModal(); // Close the view recipe modal
+        setSelectedRecipe(recipe); // Set the selected recipe to be edited
         setIsEditRecipeModalOpen(true);
     };
 
@@ -121,10 +68,15 @@ function Recipes() {
         setIsEditRecipeModalOpen(false);
     };
 
-    
+    const handleRecipeDeleted = (deletedRecipeId) => {
+        const updatedRecipes = recipes.filter((recipe) => recipe._id !== deletedRecipeId);
+        setRecipes(updatedRecipes);
+    }
+
+
     const editRecipe = (updatedRecipe) => {
         const updatedRecipes = recipes.map((recipe) =>
-            recipe.id === updatedRecipe.id ? updatedRecipe : recipe
+            recipe._id === updatedRecipe._id ? updatedRecipe : recipe
         );
         setRecipes(updatedRecipes);
     };
@@ -135,11 +87,12 @@ function Recipes() {
     };
 
     return (
-        <div>
-            <Navbar />
+
+        <MainLayout>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-10 mt-5">
                 <button
-                    onClick={openAddRecipeModal} 
+                    onClick={openAddRecipeModal}
                     className="bg-gray-800 text-white px-6 py-4 rounded hover:bg-gray-900 col-start-8 col-end-8">
                     Add Recipe
                 </button>
@@ -147,19 +100,20 @@ function Recipes() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-10 mt-5">
                 {recipes.map((recipe) => (
                     <RecipeCard
-                        key={recipe.id}
+                        key={recipe._id}
                         recipe={recipe}
                         onView={openRecipeModal} // Pass the openModal function as a prop
                     />
                 ))}
             </div>
 
-            <ViewRecipeModal isOpen={isRecipeModalOpen} onClose={closeRecipeModal} onOpenEditRecipeModal={openEditRecipeModal}>
+            <ViewRecipeModal isOpen={isRecipeModalOpen} onClose={closeRecipeModal} hasRecipe={selectedRecipe} onOpenEditRecipeModal={() => openEditRecipeModal(selectedRecipe)} onRecipeDeleted={handleRecipeDeleted}>
                 {selectedRecipe && (
-                    <div>
+                    <div className='h-full'>
                         <h2 className="text-2xl font-bold mb-4">{selectedRecipe.title}</h2>
                         <img
                             src={selectedRecipe.image}
+                            // src={"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2F4.bp.blogspot.com%2F--jj6-iM9YQU%2FVjJV0O-Bq_I%2FAAAAAAAAAOk%2Fl1wJkkOZTLQ%2Fs1600%2Fbraised-pork-adobo.jpg&f=1&nofb=1&ipt=7c395587322e43f4698819a5dce08aa013eaa9f25be1cdbd613ce937ac1b6a7e"}
                             alt={selectedRecipe.title}
                             className="w-full h-48 object-cover mb-4"
                         />
@@ -172,12 +126,12 @@ function Recipes() {
                         </ul>
                         <h3 className="text-xl font-bold mb-2">Recipe:</h3>
                         <ol className="list-disc list-inside mb-4">
-                            {selectedRecipe.recipe.map((step, index) => (
+                            {selectedRecipe.instructions.map((step, index) => (
                                 <li key={index} className="mb-2 list-none">{step}</li>
                             ))}
                         </ol>
                         {/* Add more recipe details here */}
-                      
+
                     </div>
                 )}
             </ViewRecipeModal>
@@ -186,13 +140,14 @@ function Recipes() {
                 onClose={closeAddRecipeModal}
                 onAddRecipe={addRecipe}
             />
-             <EditRecipeModal
+            <EditRecipeModal
                 isOpen={isEditRecipeModalOpen}
                 onClose={closeEditRecipeModal}
                 recipe={selectedRecipe}
                 onEditRecipe={editRecipe}
             />
-        </div>
+        </MainLayout>
+
     )
 }
 
