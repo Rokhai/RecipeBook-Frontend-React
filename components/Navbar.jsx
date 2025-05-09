@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router'; // Ensure correct import for React Router
-import axios from 'axios';
-
-const api = axios.create({
-    baseURL: 'http://localhost:3000',
-    withCredentials: true,
-})
-
+import { Link, useLocation, useNavigate } from 'react-router'; // Ensure correct import for React Router
+import api from '../util/api'; // Adjust the import path as necessary
 
 function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // State for mobile menu
   const dropdownRef = useRef(null);
   const location = useLocation(); // Get the current location
+  const navigate = useNavigate(); // For navigation
+
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -45,21 +41,27 @@ function Navbar() {
 
       // Handle success response
       if (response.status === 200) {
-        alert('Logged out successfully');
-        window.location.href = '/login'; // Redirect to home page
+        // alert('Logged out successfully');
+        // window.location.href = '/login'; // Redirect to home page
+        navigate('/login', {state: {loggedOut: true}}); // Use navigate to redirect
       } else {
-        alert('Error logging out');
+        navigate(location.pathname, {state: {loggedOut: true, message: "Error logging out"}})
+        
+        // alert('Error logging out');
       }
     } catch (err) {
       // Handle error response
       if (err.response && err.response.status === 400) {
-        alert(err.response.data.message);
+        // alert(err.response.data.message);
+        navigate(location.pathname, {state: {loggedOut: true, message: err.response.data.message}})
       } else {
-        alert('An error occurred. Please try again later.');
+        // alert('An error occurred. Please try again later.');
+        navigate(location.pathname, {state: {loggedOut: true, message: "An error occurred. Please try again later."}})
       }
       // Log the error for debugging
       console.error(err);
-      alert('Error logging out');
+        navigate(location.pathname, {state: {loggedOut: true, message: "Error logging out"}})
+      // alert('Error logging out');
     }
   }
 
@@ -72,6 +74,7 @@ function Navbar() {
         <h2 className="font-bold text-lg">
           <Link to="/home">Recipe Book</Link>
         </h2>
+        
         {/* Hamburger Menu for Mobile */}
         <button
           className="md:hidden text-white focus:outline-none"
@@ -92,24 +95,25 @@ function Navbar() {
             ></path>
           </svg>
         </button>
+
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-10 mx-4">
           <li
-            className={`px-4 py-2 rounded-full ${
+            className={`px-4 py-2 rounded ${
               isActive('/home') ? 'bg-white text-black' : 'hover:bg-gray-700'
             }`}
           >
             <Link to="/home">Home</Link>
           </li>
           <li
-            className={`px-4 py-2 rounded-full ${
+            className={`px-4 py-2 rounded ${
               isActive('/recipes') ? 'bg-white text-black' : 'hover:bg-gray-700'
             }`}
           >
             <Link to="/recipes">My Recipes</Link>
           </li>
           <li
-            className="relative px-4 py-2 rounded-full hover:bg-gray-700"
+            className="relative px-4 py-2 rounded hover:bg-gray-700"
             ref={dropdownRef}
           >
             <button onClick={toggleDropdown} className="focus:outline-none">
@@ -119,7 +123,7 @@ function Navbar() {
               <div className="absolute right-0 mt-4 w-48 bg-white text-black p-4 rounded shadow-lg z-50">
                 <ul>
                   <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link to="/home" onClick={() => setMenuOpen(false)}>
+                  <Link to="/settings" onClick={() => setMenuOpen(false)}>
                         Settings
                       </Link>
                   </li>
@@ -133,6 +137,7 @@ function Navbar() {
           </li>
         </ul>
       </div>
+
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-gray-800">
@@ -169,24 +174,12 @@ function Navbar() {
                 >
                   <ul>
                     <li className="px-4 py-2 hover:bg-gray-200">
-                      <Link to="/home" onClick={() => setMenuOpen(false)}>
+                      <Link to="/settings" onClick={() => setMenuOpen(false)}>
                         Settings
                       </Link>
-                      {/* <a href="/settings" onClick={() => setMenuOpen(false)}>
-                        Settings
-                      </a> */}
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-200">
-                      <Link to="/home">Log out</Link>
-                      {/* <button
-                        onClick={() => {
-                          alert('Logged out');
-                          window.location.href = '/home';
-                          setMenuOpen(false);
-                        }}
-                      >
-                        Logout
-                      </button> */}
+                      <Link onClick={handleLogout}>Log out</Link>
                     </li>
                   </ul>
                 </div>
