@@ -123,7 +123,7 @@ function Navbar() {
               <div className="absolute right-0 mt-4 w-48 bg-white text-black p-4 rounded shadow-lg z-50">
                 <ul>
                   <li className="px-4 py-2 hover:bg-gray-200">
-                  <Link to="/home" onClick={() => setMenuOpen(false)}>
+                  <Link to="/settings" onClick={() => setMenuOpen(false)}>
                         Settings
                       </Link>
                   </li>
@@ -174,7 +174,7 @@ function Navbar() {
                 >
                   <ul>
                     <li className="px-4 py-2 hover:bg-gray-200">
-                      <Link to="/home" onClick={() => setMenuOpen(false)}>
+                      <Link to="/settings" onClick={() => setMenuOpen(false)}>
                         Settings
                       </Link>
                     </li>
