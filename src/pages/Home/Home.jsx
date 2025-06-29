@@ -4,6 +4,8 @@ import MainLayout from '../../components/Layout/MainLayout.jsx';
 import api from '../../util/api'; // Import the API utility
 import Toast from '../../components/Toast.jsx';
 
+
+import { Button } from '@/components/ui/button.js';
 import { Link, useLocation, useNavigate } from 'react-router'; // Import necessary hooks from react-router-dom
 function Home() {
     const [profile, setProfile] = useState(null);
@@ -60,10 +62,15 @@ function Home() {
                         <h1 className='text-8xl'>Welcome, {profile.name}</h1>
                         <h2 className='text-2xl'>Ready to manage your recipe?</h2>
                         <Link to="/recipes">
-                            <button className='bg-gray-900 text-white font-bold py-2 px-4 hover:bg-gray-700 rounded'>
+                            {/* <button className='bg-gray-900 text-white font-bold py-2 px-4 hover:bg-gray-700 rounded'>
                                 Manage Recipe
-                            </button>
+                            </button> */}
+                            <Button>
+                                Manage Recipe
+                            </Button>
                         </Link>
+
+                        
                     </div>
                 ) : (
                     <p>Loading profile...</p>

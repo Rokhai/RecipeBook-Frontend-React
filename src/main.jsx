@@ -3,12 +3,12 @@ import { BrowserRouter, Routes, Route } from 'react-router'
 
 import './index.css'
 import App from './App.jsx'
-import Login from '../pages/Login/Login.jsx'
-import Register from '../pages/Register/Register.jsx'
-import Home from '../pages/Home/Home.jsx'
-import Setting from '../pages/Setting/Setting.jsx'
+import Login from './pages/Login/Login.jsx'
+import Register from './pages/Register/Register.jsx'
+import Home from './pages/Home/Home.jsx'
+import Setting from './pages/Setting/Setting.jsx'
 import { StrictMode } from 'react'
-import Recipes from '../pages/Recipes/Recipes.jsx'
+import Recipes from './pages/Recipes/Recipes.jsx'
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>

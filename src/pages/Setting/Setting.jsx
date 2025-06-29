@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
-import Toast from '../../components/Toast'
-import MainLayout from '../../components/Layout/MainLayout'
+import Toast from '@/components/Toast';
+import MainLayout from '@/components/Layout/MainLayout';
 import api from '../../util/api'
 
 

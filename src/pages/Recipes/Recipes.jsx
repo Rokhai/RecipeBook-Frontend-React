@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 // import Navbar from '../../components/Navbar'
 
-import api from '../../util/api';
+import api from '@/util/api';
 import ViewRecipeModal from './components/ViewRecipeModal';
 import AddRecipeModal from './components/AddRecipeModal';
 import EditRecipeModal from './components/EditRecipeModal';
