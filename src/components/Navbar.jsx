@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router'; // Ensure correct import for React Router
 import api from '../util/api'; // Adjust the import path as necessary
 
@@ -11,6 +11,8 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+
+import { LogOut, Settings } from "lucide-react";
 
 function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -80,7 +82,7 @@ function Navbar() {
 
   return (
     <nav className="bg-primary text-primary-foreground shadow-md">
-      <div className="flex justify-between items-center p-4">
+      <div className="flex justify-between items-center p-4 w-full">
         <h2 className="font-bold text-lg">
           <Link to="/home">Recipe Book</Link>
         </h2>
@@ -132,7 +134,8 @@ function Navbar() {
                 <ul className="grid md:w-[250px] gap-3 p-4">
                   <li className='row-span-3'>
                     <NavigationMenuLink asChild>
-                      <Link to={"/settings"}>
+                      <Link to={"/settings"} className='flex items-center flex-row'>
+                        <Settings className="w-4 h-4 mr-2" />
                         Settings
                       </Link>
                     </NavigationMenuLink>
@@ -140,7 +143,8 @@ function Navbar() {
                   </li>
                   <li>
                     <NavigationMenuLink asChild>
-                      <Link onClick={handleLogout}>
+                      <Link onClick={handleLogout} className='flex items-center flex-row'>
+                        <LogOut className="w-4 h-4 mr-2" />
                         Logout
                       </Link>
                     </NavigationMenuLink>
@@ -190,51 +194,103 @@ function Navbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-gray-800">
-          <ul className="flex flex-col space-y-4 p-4">
-            <li
-              className={`px-4 py-2  ${isActive('/home') ? 'bg-white text-black' : 'hover:bg-gray-700'
-                }`}
-            >
-              <Link to="/home" onClick={() => setMenuOpen(false)}>
-                Home
-              </Link>
-            </li>
-            <li
-              className={`px-4 py-2  ${isActive('/recipes') ? 'bg-white text-black' : 'hover:bg-gray-700'
-                }`}
-            >
-              <Link to="/recipes" onClick={() => setMenuOpen(false)}>
-                My Recipes
-              </Link>
-            </li>
-            <li className="relative px-4 py-2  hover:bg-gray-700">
-              <button
-                onClick={toggleDropdown}
-                className="focus:outline-none "
-              >
-                Account
-              </button>
-              {dropdownOpen && (
-                <div
-                  className="mt-2 bg-white text-black p-4 rounded shadow-lg z-50"
-                  ref={dropdownRef}
-                >
-                  <ul>
-                    <li className="px-4 py-2 hover:bg-gray-200">
-                      <Link to="/settings" onClick={() => setMenuOpen(false)}>
-                        Settings
-                      </Link>
+        <div className='w-full md:hidden shadow-md'>
+          <NavigationMenu className='w-full'>
+            <NavigationMenuList className='flex flex-col space-y-4 p-4'>
+              <NavigationMenuItem className='w-full'>
+                <NavigationMenuLink asChild>
+                  <Link to="/home" >
+                    Home
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link to="/recipes" >
+                    My Recipes
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="bg-primary">
+                  Account
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className='relative '>
+                  <ul className="grid md:w-[250px] gap-3 p-4  text-primary w-full">
+                    <li className='row-span-3'>
+                      <NavigationMenuLink asChild>
+                        <Link to="/settings" className='flex items-center flex-row' >
+                          <Settings className="w-4 h-4 mr-2" />
+                          Settings
+                        </Link>
+                      </NavigationMenuLink>
                     </li>
-                    <li className="px-4 py-2 hover:bg-gray-200">
-                      <Link onClick={handleLogout}>Log out</Link>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link onClick={handleLogout} className='flex items-center flex-row' >
+                          <LogOut className="w-4 h-4 mr-2" />
+
+                          Logout
+                        </Link>
+                      </NavigationMenuLink>
                     </li>
+
+
+
                   </ul>
-                </div>
-              )}
-            </li>
-          </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+
+
+          </NavigationMenu>
         </div>
+
+        // <div className="md:hidden bg-primary text-primary-foreground shadow-md">
+        //   <ul className="flex flex-col space-y-4 p-4">
+        //     <li
+        //       className={`px-4 py-2  ${isActive('/home') ? 'bg-white text-black' : 'hover:bg-gray-700'
+        //         }`}
+        //     >
+        //       <Link to="/home" onClick={() => setMenuOpen(false)}>
+        //         Home
+        //       </Link>
+        //     </li>
+        //     <li
+        //       className={`px-4 py-2  ${isActive('/recipes') ? 'bg-white text-black' : 'hover:bg-gray-700'
+        //         }`}
+        //     >
+        //       <Link to="/recipes" onClick={() => setMenuOpen(false)}>
+        //         My Recipes
+        //       </Link>
+        //     </li>
+        //     <li className="relative px-4 py-2  hover:bg-gray-700">
+        //       <button
+        //         onClick={toggleDropdown}
+        //         className="focus:outline-none "
+        //       >
+        //         Account
+        //       </button>
+        //       {dropdownOpen && (
+        //         <div
+        //           className="mt-2 bg-white text-black p-4 rounded shadow-lg z-50"
+        //           ref={dropdownRef}
+        //         >
+        //           <ul>
+        //             <li className="px-4 py-2 hover:bg-gray-200">
+        //               <Link to="/settings" onClick={() => setMenuOpen(false)}>
+        //                 Settings
+        //               </Link>
+        //             </li>
+        //             <li className="px-4 py-2 hover:bg-gray-200">
+        //               <Link onClick={handleLogout}>Log out</Link>
+        //             </li>
+        //           </ul>
+        //         </div>
+        //       )}
+        //     </li>
+        //   </ul>
+        // </div>
       )}
     </nav>
   );
