@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router';
-import api from '../../util/api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import z from 'zod';
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Toaster } from '@/components/ui/sonner';
 import {toast} from 'sonner';
 import {
@@ -16,9 +17,38 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+
+import { LoaderCircle, LogIn } from 'lucide-react';
+
+import api from '../../util/api';
+
+const loginFormSchema = z.object({
+    username: z.string().min(1, "Username is required"),
+    password: z.string().min(3, "Password is at least 8 characters long"),
+});
+
 export default function Login() {
+    const [isLoading, setIsLoading] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
+
+
+    const form = useForm<z.infer<typeof loginFormSchema>>({
+        resolver: zodResolver(loginFormSchema),
+        defaultValues: {
+            username: '',
+            password: '',
+        },
+    });
+
 
     useEffect(() => {
         const logoutNotification = () => {
@@ -30,7 +60,6 @@ export default function Login() {
                     duration: 3000, // Duration in milliseconds
                     position: 'top-center', // Position of the toast
                 });
-                // location.state.loggedOut = false; // Reset the loggedOut state
     
                 // Clear the loggedOut state after showing the message
                 navigate(location.pathname, { replace: true, state: {} })
@@ -40,16 +69,13 @@ export default function Login() {
     }, [location.state]); // Run this effect only when location.state changes
 
     // Handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const username = e.target.username.value;
-        const password = e.target.password.value;
-
+    const handleSubmit = async (values: z.infer<typeof loginFormSchema>) => {
+        setIsLoading(true);
         try {
             // Perform login logic here
             const response = await api.post('/auth/login', {
-                username,
-                password
+                username: values.username,
+                password: values.password
             });
 
             // Handle success response
@@ -88,9 +114,13 @@ export default function Login() {
                 duration: 3000, // Duration in milliseconds
                 position: 'top-center', // Position of the toast
             })
+        } finally {
+            setIsLoading(false);
         }
+
     }
 
+    // Render the login form
     return (
         <div className='flex flex-col items-center justify-center h-screen'>
             <Card className='w-full max-w-sm'>
@@ -101,38 +131,61 @@ export default function Login() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form action="" onSubmit={handleSubmit}>
-                        <div className='grid gap-2'>
-                            <Label htmlFor='username'>Username</Label>
-                            <Input
-                                id='username'
-                                type='text'
-                                placeholder='Enter your username'
-                                className='border border-gray-300 rounded px-4 py-2 mb-4 w-full'
-                                required
+
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-4'>
+                            <FormField
+                                control={form.control}
+                                name='username' 
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Username</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder='Enter your username'
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
-                        </div>
-                        <div className='grid gap-2'>
-                            <Label htmlFor='password'>Password</Label>
-                            <Input
-                                id='password'
-                                type='password'
-                                placeholder='Enter your password'
-                                className='border border-gray-300 rounded px-4 py-2 mb-4 w-full'
-                                required
+                            <FormField
+                                control={form.control}
+                                name='password'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                type='password'
+                                                placeholder='Enter your password'
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
-                        </div>
-                        <div>
-                            <Button type='submit' className='w-full'>
+                            <Button
+                                type='submit'
+                                className='w-full'
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <LoaderCircle className='animate-spin' />
+                                ) : (
+                                    <LogIn className='mr-2' />
+                                )}      
                                 Login
                             </Button>
-
-                        </div>
-                    </form>
+                        </form>
+                    </Form>
                 </CardContent>
                 <CardFooter className='flex-col'>
                     <div>
-                        <p className='mt-4'>Don't have an account?
+                        <p className='mt-4'>
+                            Don't have an account?
                             <a href="/register">
                                 <Button variant={"link"}>
                                     Register
