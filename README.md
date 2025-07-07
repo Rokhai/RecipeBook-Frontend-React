@@ -1,30 +1,52 @@
 # Recipebook Frontend
+This is based from a project from a school project `ReciBook` made from native php, and bootstrap as frontend framework
 
+## Prerequisites
+- Node.js v22.14.0+
+- NPM 10.9.2
+- Docker 20.3.1 (optional)
 
-## Vite + React
-<p>This project is developed with React Framework, and Vite is a build tool that aims to provide a faster and leaner development experience for modern web projects.
-This will simplifies the development workflow by offering speed, flexibility, and a rich ecosystem of plugins. </p>
-
-
-### To install all dependencies
-```
+## Getting Started
+- First, install all dependencies
+```sh
 npm install
 ```
-
-### To run the project
+- Run the development server
+```sh
+npm run dev
 ```
-npm run
+Open `http://localhost:5173/` with your browser
+
+## Run with Docker
+
+- Build the image for development
+
+```
+docker build -t recipebook-frontend .
 ```
 
-# React + Vite
+- Run the image into container, put `--rm` to automatically delete the container when stopped
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+```
+docker run -p 5173:5173 recipebook-frontend
+```
 
-Currently, two official plugins are available:
+- If it doesn't display, setup the network to host
+```
+docker run --rm --network=host -p 5173:5173 recipebook-frontend
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Build a production docker container
+- Build the image for production, from seperate `Dockerfile.prod`
+- This multi-stage config contains:
+    - Stage 1: The Vite + React source code will be build via `npm run build`
+    - Stage 2: The build source will be copy to nginx folder `/usr/share/nginx/html`, and the custom nginx config is also copied to `/etc/nginx/conf.d/default.conf`
 
-## Expanding the ESLint configuration
+```sh
+docker build -t recipebook-frontend -f Dockerfile.prod .
+```
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Start a container, in this container the default port is `80` from nginx
+```sh
+docker run --rm -p 5173:80 recipebook-frontend
+```
