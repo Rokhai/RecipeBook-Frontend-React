@@ -3,13 +3,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
+import api from "@/util/api";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { LoaderCircle, MoveLeft, Delete, Plus, SquarePen } from "lucide-react";
+import { LoaderCircle, MoveLeft, Delete, Plus, Save } from "lucide-react";
 import {
     Form,
     FormControl,
@@ -20,8 +22,6 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 
-import api from "@/util/api";
-
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -29,28 +29,33 @@ const formSchema = z.object({
     image: z
         .any()
         .refine(
-            (file) => file instanceof File && file.size > 0,
+            (file) => !file || (file instanceof File && file.size > 0),
             { message: "Image is required" }
-        ),
+        )
+        .optional(),
     ingredients: z.array(z.string()).min(1, "At least one ingredient is required"),
     instructions: z.array(z.string()).min(1, "At least one Instructions are required"),
 });
 
-export default function Create() {
-    const [submitting, setSubmitting] = useState(false);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-
+export default function Edit() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const recipe = location.state?.recipe || null;
+
+    const [imagePreview, setImagePreview] = useState<string | null>(recipe ? recipe.image : null);
+    const [submitting, setSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: "",
-            description: "",
-            ingredients: [],
-            instructions: [],
+            title: recipe ? recipe.title : "",
+            description: recipe ? recipe.description : "",
+            image: null,
+            ingredients: recipe ? recipe.ingredients : [""],
+            instructions: recipe ? recipe.instructions : [""],
         }
     });
+
 
     const {
         fields: ingredientsFields,
@@ -72,34 +77,41 @@ export default function Create() {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setSubmitting(true);
         const formData = new FormData();
-        formData.append('image', values.image)
-        formData.append('title', values.title)
-        formData.append('description', values.description)
-        formData.append('ingredients', values.ingredients.join(', '))
-        formData.append('instructions', values.instructions.join(', '))
 
-
-
-        console.log("Form submitted:", values)
+        if (recipe.title !== values.title) {
+            formData.append('title', values.title);
+        }
+        if (recipe.description !== values.description) {
+            formData.append('description', values.description);
+        }
+        if (recipe.ingredients !== values.ingredients) {
+            formData.append('ingredients', values.ingredients.join(', '));
+        }
+        if (recipe.instructions !== values.instructions) {
+            formData.append('instructions', values.instructions.join(', '));
+        }
+        if (recipe.image !== values.image) {
+            formData.append('image', values.image);
+        }
 
         try {
-            const response = await api.post('/recipes', formData, {
+            const response = await api.patch('/recipes/' + recipe._id, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             })
 
-            if (response.status === 201) {
-                toast.success("Recipe created successfully", {
+            if (response.status === 200) {
+                toast.success("Change recipe successfully", {
                     position: "top-right"
                 })
 
                 setTimeout(() => {
                     navigate('/recipes')
-                }, 3000)
+                }, 1000)
             }
         } catch (err) {
-            toast.error(`Error creating recipe: ${err}`, {
+            toast.error(`Error changing recipe: ${err}`, {
                 position: "top-right"
             })
         } finally {
@@ -110,11 +122,6 @@ export default function Create() {
 
     return (
         <MainLayout>
-            {/* <div className="flex flex-col items-center justify-center h-screen">
-                <h1 className="text-2xl font-bold mb-4">Create a New Recipe</h1>
-                <p className="text-gray-600 mb-8">This feature is under development.</p>
-                <p className="text-gray-600 mb-8">Please check back later.</p>
-            </div> */}
             <div className="md:w-1/2 mx-auto my-4  " >
                 <Link to={'/recipes'}>
                     <Button variant={"link"}>
@@ -292,9 +299,9 @@ export default function Create() {
                                 {submitting ? (
                                     <LoaderCircle className="animate-spin w-5 h-5" />
                                 ) : (
-                                    <SquarePen className="w-5 h-5 mr-2" style={{ width: "24px", height: "24px" }} />
+                                    <Save className="w-5 h-5 mr-2" style={{ width: "24px", height: "24px" }} />
                                 )}
-                                <span>Add Recipe</span>
+                                <span>Save Changes</span>
                             </Button>
 
                         </div>
