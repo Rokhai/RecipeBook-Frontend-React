@@ -11,6 +11,7 @@ import MainLayout from '../../components/Layout/MainLayout';
 
 export default function Recipes() {
     const [recipes, setRecipes] = useState([]); // State to manage the list of recipes
+    const [loading, setLoading] = useState(true); // State to manage loading state
 
     // Fetch recipes from the backend when the component mounts
     useEffect(() => {
@@ -21,6 +22,13 @@ export default function Recipes() {
                 const response = await api.get('/recipes');
                 if (response.status === 200) {
                     setRecipes(response.data); // Set the recipes state with the fetched data
+                    if (response.data.length === 0) {
+                        toast.info('No recipes found. You can create a new recipe by clicking the button below.');
+                        setLoading(false); // Set loading to false if no recipes are found
+                    } else {
+                        toast.success('Recipes fetched successfully');
+                        setLoading(false); // Set loading to false after fetching recipes
+                    }
                 }
             } catch (err) {
                 toast.error('Error fetching recipes');
@@ -46,10 +54,11 @@ export default function Recipes() {
         const updatedRecipes = recipes.filter((recipe) => recipe._id !== deletedRecipeId);
         setRecipes(updatedRecipes);
     }
+    console.log("recipe lenght", recipes.length);
 
     return (
         <MainLayout>
-            {recipes.length > 0 ? (
+            {!loading ? (
                 <section className='relative py-5 mb-10'>
                     {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-10 mt-5">
                     <Link to={"/recipes/create"} className='col-start-4 col-end-4  place-self-end '>
@@ -58,6 +67,15 @@ export default function Recipes() {
                         </Button>
                     </Link>
                 </div> */}
+
+                    {/* Display a message when no recipes are found on mobile */}
+                    {recipes.length === 0 && (
+                        <div className='flex flex-col items-center justify-center space-y-4 h-[80vh] md:hidden'>
+                            <h2 className='text-2xl font-bold'>No Recipes Found</h2>
+                            <p className='text-muted-foreground sm:text-sm'>You can create a new recipe by clicking the button below.</p>
+                        </div>
+                    )}
+                    {/* Button to create a new recipe */}
                     <div className='fixed bottom-0 right-0 mb-2 mr-4 z-50 h-[64px] w-[64px] block md:hidden' >
                         <Link to={"/recipes/create"} >
                             <Button className='px-8 py-6 flex flex-row items-center justify-center w-full h-full rounded-full'>
@@ -83,8 +101,7 @@ export default function Recipes() {
                     </div>
                 </section>
             ) : (
-                <div className='flex flex-col items-center justify-center space-y-4 h-[80vh]'>
-
+                 <div className='flex flex-col items-center justify-center space-y-4 h-[80vh]'>
                     <LoaderCircle className='animate-spin h-24 w-24 text-gray-900' />
                     <p>Fetching data...</p>
                 </div>
@@ -93,3 +110,42 @@ export default function Recipes() {
         </MainLayout>
     )
 }
+
+//  <div>
+//                     {
+//                         recipes.length != 0 ? (
+
+
+                           
+
+//                         ) : (
+
+
+//                             <section className='relative py-5 mb-10'>
+
+//                                 <div className='flex flex-col items-center justify-center space-y-4 h-[80vh] md:hidden'>
+//                                     <h2 className='text-2xl font-bold'>No Recipes Found</h2>
+//                                     <p className='text-muted-foreground sm:text-sm'>You can create a new recipe by clicking the button below.</p>
+//                                 </div>
+
+//                                 <div className='fixed bottom-0 right-0 mb-2 mr-4 z-50 h-[64px] w-[64px] block md:hidden' >
+//                                     <Link to={"/recipes/create"} >
+//                                         <Button className='px-8 py-6 flex flex-row items-center justify-center w-full h-full rounded-full'>
+//                                             <SquarePen className='text-primary-foreground  mb-2 ' style={{ width: "24px", height: "24px" }} />
+//                                             {/* <span>New Recipe</span> */}
+//                                         </Button>
+//                                     </Link>
+//                                 </div>
+//                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-10 mt-5">
+//                                     <Link to={"/recipes/create"} className='hidden md:block h-96'>
+//                                         <div className='border-2 border-primary h-full flex flex-col justify-center items-center'>
+//                                             <CirclePlus className='text-primary h-16 w-16 mb-2' />
+//                                             <span className='text-sm text-primary'>Add new recipe</span>
+//                                         </div>
+//                                     </Link>
+//                                 </div>
+//                             </section>
+//                         )
+//                     }
+//                 </div>
+
